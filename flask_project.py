@@ -1,5 +1,7 @@
 import json
-from flask import Flask
+import datetime
+from os import abort
+from flask import Flask, abort
 
 app = Flask(__name__)
 
@@ -8,18 +10,20 @@ data = {
     'name': 'My name is Flask Server',
 }
 
+result = '{{\"{0}\": \"{1}\", "time": {2} }}'
+
 @app.route('/')
 def hello_world():
     return 'Hello World!'
 
 
 @app.route('/dictionary/<key>', methods=['GET'])
+# @app.error_handlers(404)
 def seek_and_show(key):
-    try:
-        result = data[key]
-    except KeyError:
-        result = '404'
-    return data
+    if data.get(key):
+        return result.format(key, data.get(key), datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+    else:
+        abort(404)
 
 
 @app.route('/dictionary/', methods=['POST'])
@@ -27,23 +31,21 @@ def add_element(request):
     params = json.loads(request.data)
     if not data.get(params.key):
         data.update({params.key: params.value})
-        code = '200'
     elif params.key and params.value:
-        code = 400
+        abort(400)
     else:
-        code = 409
-    return code
+        abort(409)
+    return result.format(params.key, params.value, datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
 
 
 @app.route('/dictionary', methods=['PUT'])
 def change_element(request):
     params = json.loads(request.data)
     try:
-        data[request.key] = request.value
-        code = '200'
+        data[params.key] = params.value
     except KeyError:
-        code = '404'
-    return code
+        abort(404)
+    return result.format(params.key, params.value, datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
 
 
 @app.route('/dictionary/<key>', methods=['DELETE'])
@@ -52,7 +54,7 @@ def delete_element(key):
         data.pop(key)
     except KeyError:
         pass
-    return '200'
+    return result.format(key, 'null', datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
 
 
 if __name__ == '__main__':
