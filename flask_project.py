@@ -19,17 +19,17 @@ def hello_world():
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return json.dumps({'code': 404, 'message': 'Sorry, not this URL'})
+    return json.dumps({'code': 404, 'message': 'Sorry, not this URL'}), 404
 
 
 @app.errorhandler(400)
 def page_not_found(error):
-    return json.dumps({'code': 400, 'message': 'Bad request'})
+    return json.dumps({'code': 400, 'message': 'Bad request'}), 400
 
 
 @app.errorhandler(409)
 def page_not_found(error):
-    return json.dumps({'code': 409, 'message': 'We have conflict'})
+    return json.dumps({'code': 409, 'message': 'We have conflict'}), 409
 
 
 @app.route('/dictionary/<key>', methods=['GET'])
@@ -58,9 +58,9 @@ def add_element():
 @app.route('/dictionary', methods=['PUT'])
 def change_element():
     params = json.loads(request.data)
-    try:
+    if data.get(params['key']):
         data[params['key']] = params['value']
-    except KeyError:
+    else:
         abort(404)
     return json.dumps({params['key']: params['value'], "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")})
 
