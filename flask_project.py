@@ -1,7 +1,7 @@
 import json
 import datetime
 from os import abort
-from flask import Flask, abort
+from flask import Flask, abort, render_template, request
 
 app = Flask(__name__)
 
@@ -15,9 +15,12 @@ data = {
 def hello_world():
     return 'Hello World!'
 
+@app.errorhandler(404)
+def page_not_found(error):
+    return json.dumps({'code': 404, 'message': 'Sorry, not this URL'})
+
 
 @app.route('/dictionary/<key>', methods=['GET'])
-# @app.error_handlers(404)
 def seek_and_show(key):
     if data.get(key):
         return json.dumps({key: data.get(key), "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")})
@@ -25,26 +28,29 @@ def seek_and_show(key):
         abort(404)
 
 
-@app.route('/dictionary/', methods=['POST'])
-def add_element(request):
+@app.route('/dictionary', methods=['POST'])
+def add_element():
     params = json.loads(request.data)
-    if not data.get(params.key):
-        data.update({params.key: params.value})
-    elif params.key and params.value:
+    # check params
+    if not params['key'] or not params['value']:
         abort(400)
+    # check element existence
+    elif not data.get(params['key']):
+        data.update({params['key']: params['value']})
+    # if same element alert
     else:
         abort(409)
-    return json.dumps({params.key: params.value, "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")})
+    return json.dumps({params['key']: params['value'], "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")})
 
 
 @app.route('/dictionary', methods=['PUT'])
-def change_element(request):
+def change_element():
     params = json.loads(request.data)
     try:
-        data[params.key] = params.value
+        data[params['key']] = params['value']
     except KeyError:
         abort(404)
-    return json.dumps({params.key: params.value, "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")})
+    return json.dumps({params['key']: params['value'], "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")})
 
 
 @app.route('/dictionary/<key>', methods=['DELETE'])
