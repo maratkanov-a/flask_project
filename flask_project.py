@@ -10,7 +10,6 @@ data = {
     'name': 'My name is Flask Server',
 }
 
-result = '{{\"{0}\": \"{1}\", "time": {2} }}'
 
 @app.route('/')
 def hello_world():
@@ -21,7 +20,7 @@ def hello_world():
 # @app.error_handlers(404)
 def seek_and_show(key):
     if data.get(key):
-        return result.format(key, data.get(key), datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+        return json.dumps({key: data.get(key), "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")})
     else:
         abort(404)
 
@@ -35,7 +34,7 @@ def add_element(request):
         abort(400)
     else:
         abort(409)
-    return result.format(params.key, params.value, datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+    return json.dumps({params.key: params.value, "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")})
 
 
 @app.route('/dictionary', methods=['PUT'])
@@ -45,7 +44,7 @@ def change_element(request):
         data[params.key] = params.value
     except KeyError:
         abort(404)
-    return result.format(params.key, params.value, datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+    return json.dumps({params.key: params.value, "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")})
 
 
 @app.route('/dictionary/<key>', methods=['DELETE'])
@@ -54,7 +53,7 @@ def delete_element(key):
         data.pop(key)
     except KeyError:
         pass
-    return result.format(key, 'null', datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+    return json.dumps({key: 'null', "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")})
 
 
 if __name__ == '__main__':
