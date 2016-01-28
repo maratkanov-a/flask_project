@@ -1,4 +1,5 @@
 import datetime
+from random import randint
 import noseapp
 import noseapp_requests
 from noseapp.ext.requests import RequestsEx, make_config
@@ -24,7 +25,7 @@ api = requests_ex.get_endpoint_session('127.0.0.1:5000')
 
 @suite.register
 class TestCase(noseapp.TestCase):
-
+    
     """
         get request
     """
@@ -43,6 +44,7 @@ class TestCase(noseapp.TestCase):
        post requests
     """
     def test_post_ok(self):
+        # creepy
         api.post('dictionary', {"key": "mail.ru", "value": "target"})
 
     def test_post_409(self):
@@ -50,6 +52,10 @@ class TestCase(noseapp.TestCase):
 
     def test_post_400(self):
         self.assertEqual(HTTPError(400).message, api.post('dictionary', {"key": "name", "value": ""})['code'])
+
+    def test_post_time(self):
+        self.assertEqual(api.post('dictionary', {"key": randint(0, 99), "value": randint(0, 99)})['time'], datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+
 
 
 # @suite.register
