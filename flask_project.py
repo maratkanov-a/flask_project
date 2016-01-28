@@ -5,10 +5,8 @@ from flask import Flask, abort, render_template, request
 
 app = Flask(__name__)
 
-data = {
-    'hello': 'Hello World!',
-    'name': 'My name is Flask Server',
-}
+# main dict
+data = {}
 
 
 @app.route('/')
