@@ -15,9 +15,21 @@ data = {
 def hello_world():
     return 'Hello World!'
 
+
+
 @app.errorhandler(404)
 def page_not_found(error):
     return json.dumps({'code': 404, 'message': 'Sorry, not this URL'})
+
+
+@app.errorhandler(400)
+def page_not_found(error):
+    return json.dumps({'code': 400, 'message': 'Bad request'})
+
+
+@app.errorhandler(409)
+def page_not_found(error):
+    return json.dumps({'code': 409, 'message': 'We have conflict'})
 
 
 @app.route('/dictionary/<key>', methods=['GET'])

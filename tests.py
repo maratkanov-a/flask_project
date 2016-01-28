@@ -30,11 +30,11 @@ class TestCase(noseapp.TestCase):
     """
     def test_get_404(self):
         self.assertEqual(HTTPError(404).message, api.get('dictionary/123')['code'])
-    
+
     def test_get_200(self):
         # creepy
         self.assertNotEqual(HTTPError(404).message, api.get('dictionary/name')['name'])
-    
+
     # check time - must be equivalent to out time
     def test_get_time(self):
         self.assertEqual(api.get('dictionary/name')['time'], datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
@@ -42,14 +42,14 @@ class TestCase(noseapp.TestCase):
     """
        post requests
     """
-    # def test_post(self):
-    #     api.post('dictionary', {"key": "mail.ru", "value": "target"})
+    def test_post_ok(self):
+        api.post('dictionary', {"key": "mail.ru", "value": "target"})
 
     def test_post_409(self):
-        api.post('dictionary', {"key": "name", "value": "1"})
+        self.assertEqual(HTTPError(409).message, api.post('dictionary', {"key": "name", "value": "1"})['code'])
 
     def test_post_400(self):
-        api.post('dictionary', {"key": "name", "value": ""})
+        self.assertEqual(HTTPError(400).message, api.post('dictionary', {"key": "name", "value": ""})['code'])
 
 
 # @suite.register
