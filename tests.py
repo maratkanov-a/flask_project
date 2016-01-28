@@ -24,8 +24,7 @@ api = requests_ex.get_endpoint_session('127.0.0.1:5000')
 
 
 @suite.register
-class TestCase(noseapp.TestCase):
-
+class TestCaseGetOne(noseapp.TestCase):
     """
         get request
     """
@@ -40,6 +39,9 @@ class TestCase(noseapp.TestCase):
     def test_get_time(self):
         self.assertEqual(api.get('dictionary/name')['time'], datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
 
+
+@suite.register
+class TestCasePost(noseapp.TestCase):
     """
        post requests
     """
@@ -56,8 +58,11 @@ class TestCase(noseapp.TestCase):
     def test_post_time(self):
         self.assertEqual(api.post('dictionary', {"key": randint(0, 99), "value": randint(0, 99)})['time'], datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
 
+
+@suite.register
+class TestCasePut(noseapp.TestCase):
     """
-       post requests
+       put requests
     """
     def test_put_ok(self):
         api.put('dictionary', {"key": "name", "value": "1"})
@@ -67,6 +72,24 @@ class TestCase(noseapp.TestCase):
 
     def test_put_time(self):
         self.assertEqual(api.put('dictionary', {"key": 'name', "value": randint(0, 99)})['time'], datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+
+
+@suite.register
+class TestCaseDelete(noseapp.TestCase):
+    """
+    delete requests
+    """
+    # double deleting same element to check 200
+    def test_delete_ok(self):
+        # add element for test
+        api.post('dictionary', {"key": "for_test", "value": "speech"})
+        self.assertEqual(api.delete('dictionary/for_test')['for_test'], 'null')
+        self.assertEqual(api.delete('dictionary/for_test')['for_test'], 'null')
+
+    def test_delete_time(self):
+        # add element for test
+        api.post('dictionary', {"key": "for_test", "value": "speech"})
+        self.assertEqual(api.delete('dictionary/for_test')['time'], datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
 
 
 
