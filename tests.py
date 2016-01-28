@@ -12,7 +12,7 @@ endpoint.configure(
 )
 endpoint.session_configure(
     always_return_json=True,
-    raise_on_http_error=True
+    raise_on_http_error=False
 )
 requests_ex = RequestsEx(endpoint)
 
@@ -25,52 +25,48 @@ api = requests_ex.get_endpoint_session('127.0.0.1:5000')
 
 @suite.register
 class TestCase(noseapp.TestCase):
-    #
-    # """
-    #     get request
-    # """
-    # def test_get_404(self):
-    #     self.assertEqual(HTTPError(404).message, api.get('dictionary/123')['code'])
-    #
-    # def test_get_200(self):
-    #     # creepy
-    #     self.assertNotEqual(HTTPError(404).message, api.get('dictionary/name')['name'])
-    #
-    # # check time - must be equivalent to out time
-    # def test_get_time(self):
-    #     self.assertEqual(api.get('dictionary/name')['time'], datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
-    #
-    # """
-    #    post requests
-    # """
-    # def test_post_ok(self):
-    #     # creepy
-    #     api.post('dictionary', {"key": "mail.ru", "value": "target"})
-    #
-    # def test_post_409(self):
-    #     self.assertEqual(HTTPError(409).message, api.post('dictionary', {"key": "name", "value": "1"})['code'])
-    #
-    # def test_post_400(self):
-    #     self.assertEqual(HTTPError(400).message, api.post('dictionary', {"key": "name", "value": ""})['code'])
-    #
-    # def test_post_time(self):
-    #     self.assertEqual(api.post('dictionary', {"key": randint(0, 99), "value": randint(0, 99)})['time'], datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
 
     """
-       put requests
+        get request
+    """
+    def test_get_404(self):
+        self.assertEqual(HTTPError(404).message, api.get('dictionary/123')['code'])
+
+    def test_get_200(self):
+        # creepy
+        self.assertNotEqual(HTTPError(404).message, api.get('dictionary/name')['name'])
+
+    # check time - must be equivalent to out time
+    def test_get_time(self):
+        self.assertEqual(api.get('dictionary/name')['time'], datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+
+    """
+       post requests
+    """
+    def test_post_ok(self):
+        # creepy
+        api.post('dictionary', {"key": "mail.ru", "value": "target"})
+
+    def test_post_409(self):
+        self.assertEqual(HTTPError(409).message, api.post('dictionary', {"key": "name", "value": "1"})['code'])
+
+    def test_post_400(self):
+        self.assertEqual(HTTPError(400).message, api.post('dictionary', {"key": "name", "value": ""})['code'])
+
+    def test_post_time(self):
+        self.assertEqual(api.post('dictionary', {"key": randint(0, 99), "value": randint(0, 99)})['time'], datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+
+    """
+       post requests
     """
     def test_put_ok(self):
-        # creepy
-        api.put('dictionary', {"key": "mail.ru", "value": "target"})
+        api.put('dictionary', {"key": "name", "value": "1"})
 
     def test_put_404(self):
-        self.assertEqual(HTTPError(404).message, api.put('dictionary', {"key": "name", "value": "1"})['code'])
+        self.assertEqual(HTTPError(404).message, api.put('dictionary', {"key": randint(100, 999), "value": randint(100, 999)})['code'])
 
-    # def test_put_400(self):
-    #     self.assertEqual(HTTPError(400).message, api.post('dictionary', {"key": "name", "value": ""})['code'])
-    #
-    # def test_put_time(self):
-    #     self.assertEqual(api.post('dictionary', {"key": randint(0, 99), "value": randint(0, 99)})['time'], datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+    def test_put_time(self):
+        self.assertEqual(api.put('dictionary', {"key": 'name', "value": randint(0, 99)})['time'], datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
 
 
 
