@@ -1,9 +1,9 @@
 import datetime
 from random import randint
 import noseapp
-import noseapp_requests
 from noseapp.ext.requests import RequestsEx, make_config
 from requests import HTTPError
+
 # setting up
 endpoint = make_config()
 endpoint.configure(
@@ -55,6 +55,7 @@ class TestCasePost(noseapp.TestCase):
     def test_post_400(self):
         self.assertEqual(HTTPError(400).message, api.post('dictionary', {"key": "name", "value": ""})['code'])
 
+    # check request time
     def test_post_time(self):
         self.assertEqual(api.post('dictionary', {"key": randint(0, 99), "value": randint(0, 99)})['time'], datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
 
@@ -70,6 +71,7 @@ class TestCasePut(noseapp.TestCase):
     def test_put_404(self):
         self.assertEqual(HTTPError(404).message, api.put('dictionary', {"key": randint(100, 999), "value": randint(100, 999)})['code'])
 
+    # check request time
     def test_put_time(self):
         self.assertEqual(api.put('dictionary', {"key": 'name', "value": randint(0, 99)})['time'], datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
 
@@ -86,6 +88,7 @@ class TestCaseDelete(noseapp.TestCase):
         self.assertEqual(api.delete('dictionary/for_test')['for_test'], 'null')
         self.assertEqual(api.delete('dictionary/for_test')['for_test'], 'null')
 
+    # check request time
     def test_delete_time(self):
         # add element for test
         api.post('dictionary', {"key": "for_test", "value": "speech"})
